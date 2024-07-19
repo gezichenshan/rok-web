@@ -151,7 +151,12 @@ onMounted(() => {
   min-height: 100vh;
   margin: auto;
   padding: 10px;
-  background: url(@/assets/image/rok-bg.jpg);
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.8) 100%
+    ),
+    url(@/assets/image/rok-bg.jpg);
   background-size: 200px;
 }
 .tou {
