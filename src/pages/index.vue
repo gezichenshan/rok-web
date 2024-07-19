@@ -33,10 +33,10 @@
           />
         </a-form-item>
 
-        <a-form-item label="失落" name="lost">
+        <a-form-item label="失落号码" name="lost">
           <a-input
             v-model:value="formState.lost"
-            placeholder="仅失落之地填写"
+            placeholder="如：C11395（仅失落之地填写）"
           />
         </a-form-item>
 
@@ -86,6 +86,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
+import dayjs from "dayjs";
 import { cacheStorage } from "~/utils";
 import { ask } from "@/api/request";
 import type { Location } from "@/model";
@@ -123,8 +124,16 @@ const formState = reactive<Location>({
   password: "",
 });
 const onFinish = (values: any) => {
-  console.log("Success:", values);
-  cacheStorage.set(FORM_CACHE, values);
+  const _cache = cacheStorage.get(FORM_CACHE);
+  if (_cache.x === values.x && _cache.y === values.y) {
+    if (_cache.time) {
+      if (dayjs().subtract(1, "minute").isBefore(dayjs(_cache.time))) {
+        message.error("请求处理中~请勿重复提交!");
+        return;
+      }
+    }
+  }
+  cacheStorage.set(FORM_CACHE, { ...values, time: dayjs() });
   ask(values);
 };
 
