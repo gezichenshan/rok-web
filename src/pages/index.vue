@@ -1,12 +1,23 @@
 <template>
   <div class="ctn">
-    <a-card>
-      <h2 class="pt-4 pb-4">头衔申请</h2>
+    <a-card
+      title="头衔申请"
+      style="width: 100%; max-width: 600px"
+      bodyStyle="padding:10px 24px"
+    >
+      <template #extra>
+        <img
+          :src="touImg"
+          class="tou"
+          @click="handleTouClick"
+          :class="[enbaledDafaguan && 'enabled']"
+        />
+      </template>
       <a-form
         :model="formState"
         name="basic"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 20 }"
         autocomplete="off"
         @finish="onFinish"
         @finishFailed="onFinishFailed"
@@ -49,10 +60,13 @@
           :rules="[{ required: true, message: '不能为空' }]"
         >
           <a-select v-model:value="formState.type">
-            <a-select-option value="大科学家">大科学家</a-select-option>
-            <a-select-option value="大建筑师">大建筑师</a-select-option>
-            <a-select-option value="公爵">公爵</a-select-option>
-            <a-select-option value="大法官" disabled>大法官</a-select-option>
+            <a-select-option
+              v-for="item in options"
+              :value="item.name"
+              :disabled="item.disabled"
+            >
+              {{ item.name }}
+            </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item
@@ -63,7 +77,7 @@
           <a-input v-model:value="formState.password" />
         </a-form-item>
 
-        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+        <a-form-item :wrapper-col="{ offset: 8, span: 16 }" class="mt-2">
           <a-button type="primary" html-type="submit">提交</a-button>
         </a-form-item>
       </a-form>
@@ -75,7 +89,30 @@ import { reactive } from "vue";
 import { cacheStorage } from "~/utils";
 import { ask } from "@/api/request";
 import type { Location } from "@/model";
+import touImg from "@/assets/image/tou.png";
 const FORM_CACHE = "form";
+
+const touClickTimes = ref(0);
+const enbaledDafaguan = computed(() => touClickTimes.value >= 8);
+function handleTouClick() {
+  touClickTimes.value++;
+}
+
+const options = computed(() => [
+  {
+    name: "大科学家",
+  },
+  {
+    name: "大建筑师",
+  },
+  {
+    name: "公爵",
+  },
+  {
+    name: "大法官",
+    disabled: !enbaledDafaguan.value,
+  },
+]);
 
 const formState = reactive<Location>({
   kindom: "",
@@ -93,6 +130,7 @@ const onFinish = (values: any) => {
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
+  message.error("asdasda");
 };
 
 onMounted(() => {
@@ -110,9 +148,25 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   background-color: #efefef;
-  height: 100vh;
-  max-width: 800px;
+  min-height: 100vh;
   margin: auto;
   padding: 10px;
+  background: url(@/assets/image/rok-bg.jpg);
+  background-size: 200px;
+}
+.tou {
+  width: 60px;
+}
+.tou.enabled {
+  filter: hue-rotate(30deg);
+}
+
+@media (max-width: 575px) {
+  :deep(.ant-form .ant-form-item) {
+    margin-bottom: 0;
+  }
+  :deep(.ant-form .ant-form-item .ant-form-item-label) {
+    padding-bottom: 0;
+  }
 }
 </style>
