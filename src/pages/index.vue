@@ -139,7 +139,7 @@ const onFinish = (values: any) => {
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
-  message.error("asdasda");
+  message.error("填写有误请检查");
 };
 
 onMounted(() => {
