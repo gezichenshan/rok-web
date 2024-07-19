@@ -156,6 +156,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background-color: #efefef;
   min-height: 100vh;
   margin: auto;
