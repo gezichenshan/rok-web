@@ -99,6 +99,11 @@ function handleTouClick() {
   touClickTimes.value++;
 }
 
+message.config({
+  top: "20vh",
+  duration: 2,
+  maxCount: 3,
+});
 const options = computed(() => [
   {
     name: "大科学家",
