@@ -77,7 +77,7 @@
           <a-input v-model:value="formState.password" />
         </a-form-item>
 
-        <a-form-item :wrapper-col="{ offset: 8, span: 16 }" class="mt-2">
+        <a-form-item :wrapper-col="{ offset: 0 }" class="mt-2 text-center">
           <a-button type="primary" html-type="submit">
             提交（{{ queueMessage }}）
           </a-button>
