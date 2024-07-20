@@ -124,17 +124,21 @@ const formState = reactive<Location>({
   password: "",
 });
 const onFinish = (values: any) => {
-  const _cache = cacheStorage.get(FORM_CACHE);
-  if (_cache.x === values.x && _cache.y === values.y) {
-    if (_cache.time) {
-      if (dayjs().subtract(1, "minute").isBefore(dayjs(_cache.time))) {
-        message.error("请求处理中~请勿重复提交!");
-        return;
+  try {
+    const _cache = cacheStorage.get(FORM_CACHE);
+    if (_cache.x === values.x && _cache.y === values.y) {
+      if (_cache.time) {
+        if (dayjs().subtract(1, "minute").isBefore(dayjs(_cache.time))) {
+          message.error("请求处理中~请勿重复提交!");
+          return;
+        }
       }
     }
+    cacheStorage.set(FORM_CACHE, { ...values, time: dayjs() });
+    ask(values);
+  } catch (error) {
+    alert(error);
   }
-  cacheStorage.set(FORM_CACHE, { ...values, time: dayjs() });
-  ask(values);
 };
 
 const onFinishFailed = (errorInfo: any) => {
