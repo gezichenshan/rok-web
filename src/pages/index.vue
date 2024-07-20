@@ -78,7 +78,9 @@
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }" class="mt-2">
-          <a-button type="primary" html-type="submit">提交</a-button>
+          <a-button type="primary" html-type="submit">
+            提交（{{ queueMessage }}）
+          </a-button>
         </a-form-item>
       </a-form>
     </a-card>
@@ -88,7 +90,7 @@
 import { reactive } from "vue";
 import dayjs from "dayjs";
 import { cacheStorage } from "~/utils";
-import { ask } from "@/api/request";
+import { ask, getQueueNumber } from "@/api/request";
 import type { Location } from "@/model";
 import touImg from "@/assets/image/tou.png";
 const FORM_CACHE = "form";
@@ -128,7 +130,7 @@ const formState = reactive<Location>({
   type: "",
   password: "",
 });
-const onFinish = (values: any) => {
+const onFinish = async (values: any) => {
   try {
     const _cache = cacheStorage.get(FORM_CACHE);
     if (_cache && _cache.x === values.x && _cache.y === values.y) {
@@ -140,7 +142,8 @@ const onFinish = (values: any) => {
       }
     }
     cacheStorage.set(FORM_CACHE, { ...values, time: dayjs() });
-    ask(values);
+    await ask(values);
+    fetQueue();
   } catch (error) {
     alert(error);
   }
@@ -151,6 +154,14 @@ const onFinishFailed = (errorInfo: any) => {
   message.error("填写有误请检查");
 };
 
+const queueMessage = ref("有*个请求排队中");
+
+function fetQueue() {
+  getQueueNumber(formState.kindom).then((res) => {
+    queueMessage.value = res;
+  });
+}
+
 onMounted(() => {
   const initialValues = cacheStorage.get(FORM_CACHE);
   if (initialValues) {
@@ -158,6 +169,7 @@ onMounted(() => {
       formState[key] = initialValues[key];
     });
   }
+  fetQueue();
 });
 </script>
 <style scoped>
