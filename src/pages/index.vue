@@ -77,8 +77,11 @@
           <a-input v-model:value="formState.password" />
         </a-form-item>
 
-        <a-form-item :wrapper-col="{ offset: 0 }" class="mt-2 text-center">
-          <a-button type="primary" html-type="submit">
+        <a-form-item :wrapper-col="{ offset: 0 }" class="text-center">
+          <div class="fail-counts">
+            当前失败请求 <span style="color: red">{{ failCounts }}</span> 条
+          </div>
+          <a-button type="primary" html-type="submit" size="large" class="mt-2">
             提交（{{ queueMessage }}）
           </a-button>
         </a-form-item>
@@ -90,7 +93,7 @@
 import { reactive } from "vue";
 import dayjs from "dayjs";
 import { cacheStorage } from "~/utils";
-import { ask, getQueueNumber } from "@/api/request";
+import { ask, getQueueNumber, getFailCounts } from "@/api/request";
 import type { Location } from "@/model";
 import touImg from "@/assets/image/tou.png";
 const FORM_CACHE = "form";
@@ -162,6 +165,13 @@ function fetQueue() {
   });
 }
 
+const failCounts = ref(0);
+function fetFailCounts() {
+  getFailCounts(formState.kindom).then((res) => {
+    failCounts.value = res;
+  });
+}
+
 onMounted(() => {
   const initialValues = cacheStorage.get(FORM_CACHE);
   if (initialValues) {
@@ -170,6 +180,7 @@ onMounted(() => {
     });
   }
   fetQueue();
+  fetFailCounts();
 });
 </script>
 <style scoped>
@@ -195,6 +206,9 @@ onMounted(() => {
 }
 .tou.enabled {
   filter: hue-rotate(30deg);
+}
+.fail-counts {
+  font-size: 12px;
 }
 
 @media (max-width: 575px) {

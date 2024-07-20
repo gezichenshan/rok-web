@@ -19,7 +19,11 @@ request.interceptors.request.use(
 // Add a response interceptor
 request.interceptors.response.use(
   function (response) {
-    if (!response.config.url?.startsWith("queue")) {
+    if (
+      ["failCounts", "queue"].every(
+        (path) => !response.config.url?.startsWith(path)
+      )
+    ) {
       message.success(response.data);
     }
     return response;
@@ -47,6 +51,11 @@ export function ask(data: FormState) {
 
 export function getQueueNumber(kindom: string) {
   return request.get(`queue?kindom=${kindom}`).then((res) => {
+    return res.data;
+  });
+}
+export function getFailCounts(kindom: string) {
+  return request.get(`failCounts?kindom=${kindom}`).then((res) => {
     return res.data;
   });
 }
