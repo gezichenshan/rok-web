@@ -126,7 +126,7 @@ const formState = reactive<Location>({
 const onFinish = (values: any) => {
   try {
     const _cache = cacheStorage.get(FORM_CACHE);
-    if (_cache.x === values.x && _cache.y === values.y) {
+    if (_cache && _cache.x === values.x && _cache.y === values.y) {
       if (_cache.time) {
         if (dayjs().subtract(1, "minute").isBefore(dayjs(_cache.time))) {
           message.error("请求处理中~请勿重复提交!");
