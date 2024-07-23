@@ -19,7 +19,13 @@ request.interceptors.request.use(
 // Add a response interceptor
 request.interceptors.response.use(
   function (response) {
-    message.success(response.data);
+    if (
+      ["failCounts", "queue"].every(
+        (path) => !response.config.url?.startsWith(path)
+      )
+    ) {
+      message.success(response.data);
+    }
     return response;
   },
   function (error) {
@@ -38,8 +44,18 @@ interface FormState {
 }
 
 export function ask(data: FormState) {
-  request.post("ask", data).then((res) => {
-    console.log(1, res.data);
+  return request.post("ask", data).then((res) => {
+    return res.data;
+  });
+}
+
+export function getQueueNumber(kindom: string) {
+  return request.get(`queue?kindom=${kindom}`).then((res) => {
+    return res.data;
+  });
+}
+export function getFailCounts(kindom: string) {
+  return request.get(`failCounts?kindom=${kindom}`).then((res) => {
     return res.data;
   });
 }
