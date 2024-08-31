@@ -1,20 +1,33 @@
 <template>
     <div>
-        <div class="text-center p-4 pb-0">
+        <div class="flex justify-center p-4 pb-2">
             <a-typography-title :level="4">可喜可贺，全服总共击杀 <span class="text-red">{{ total }}</span>
                 个城寨！
             </a-typography-title>
-        </div>
-        <div class="text-end mb-4">
             <a-button type="primary" @click="message.success('牛逼牛逼！')" class="align-end">为544助力</a-button>
         </div>
         <a-collapse v-model:activeKey="activeKey">
-            <a-collapse-panel :key="user.name" v-for="user in logs">
+            <a-collapse-panel :key="user.name" v-for="(user, i) in logs">
                 <template #header>
-                    <span class="text-red font-bold">{{ user.name }}</span>
-                    <span>成功击杀了</span>
-                    <span class="text-purple font-bold">{{ user.total }}</span>
-                    <span>个城寨</span>
+                    <div class='flex item-center' :style="`${i < 3 && 'line-height:30px'}`">
+                        <span v-if="i === 0" style="color:gold;font-size: 24px;">
+                            🏆冠军
+                        </span>
+                        <span v-if="i === 1" style="color: silver;font-size: 24px;">
+                            🥈亚军
+                        </span>
+                        <span v-if="i === 2" style="color:chocolate;font-size: 24px;">
+                            🥉季军
+                        </span>
+                        <div class="text-red font-bold"
+                            :class="[i < 3 && 'animate-rubber-band animate-count-infinite animate-duration-1s text-2xl']">
+                            {{
+                                user.name
+                            }}</div>
+                        <span>成功击杀了</span>
+                        <span class="text-purple font-bold">{{ user.total }}</span>
+                        <span>个城寨</span>
+                    </div>
                 </template>
                 <div>
                     <span class='text-green'>发起记录</span> ：{{ user.attack.length }}
