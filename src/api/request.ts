@@ -20,7 +20,7 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   function (response) {
     if (
-      ["failCounts", "queue"].every(
+      ["failCounts", "queue", 'fort/list'].every(
         (path) => !response.config.url?.startsWith(path)
       )
     ) {
@@ -56,6 +56,12 @@ export function getQueueNumber(kindom: string) {
 }
 export function getFailCounts(kindom: string) {
   return request.get(`failCounts?kindom=${kindom}`).then((res) => {
+    return res.data;
+  });
+}
+
+export function getForts() {
+  return request.get(`fort/list`).then((res) => {
     return res.data;
   });
 }
