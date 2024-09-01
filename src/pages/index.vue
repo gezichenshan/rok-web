@@ -1,79 +1,34 @@
 <template>
   <div class="ctn">
-    <a-card
-      title="头衔申请"
-      style="width: 100%; max-width: 600px"
-      bodyStyle="padding:10px 24px"
-    >
-      <template #extra>
-        <img
-          :src="touImg"
-          class="tou"
-          @click="handleTouClick"
-          :class="[enbaledDafaguan && 'enabled']"
-        />
+    <a-card style="width: 100%; max-width: 600px" bodyStyle="padding:10px 24px">
+      <template #title>
+        <nuxt-link to="/forts" style="color: black;"> 头衔申请 </nuxt-link>
       </template>
-      <a-form
-        :model="formState"
-        name="basic"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 20 }"
-        autocomplete="off"
-        @finish="onFinish"
-        @finishFailed="onFinishFailed"
-      >
-        <a-form-item
-          label="服务器"
-          name="kindom"
-          :rules="[{ required: true, message: '不能为空' }]"
-        >
-          <a-input
-            v-model:value="formState.kindom"
-            placeholder="如52服，则填52"
-          />
+      <template #extra>
+        <img :src="touImg" class="tou" @click="handleTouClick" :class="[enbaledDafaguan && 'enabled']" />
+      </template>
+      <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" autocomplete="off"
+        @finish="onFinish" @finishFailed="onFinishFailed">
+        <a-form-item label="服务器" name="kindom" :rules="[{ required: true, message: '不能为空' }]">
+          <a-input v-model:value="formState.kindom" placeholder="如52服，则填52" />
         </a-form-item>
-
         <a-form-item label="失落号码" name="lost">
-          <a-input
-            v-model:value="formState.lost"
-            placeholder="如：C11395（仅失落之地填写）"
-          />
+          <a-input v-model:value="formState.lost" placeholder="如：C11395（仅失落之地填写）" />
         </a-form-item>
-
-        <a-form-item
-          label="X坐标"
-          name="x"
-          :rules="[{ required: true, message: '不能为空' }]"
-        >
+        <a-form-item label="X坐标" name="x" :rules="[{ required: true, message: '不能为空' }]">
           <a-input v-model:value="formState.x" />
         </a-form-item>
-        <a-form-item
-          label="Y坐标"
-          name="y"
-          :rules="[{ required: true, message: '不能为空' }]"
-        >
+        <a-form-item label="Y坐标" name="y" :rules="[{ required: true, message: '不能为空' }]">
           <a-input v-model:value="formState.y" />
         </a-form-item>
-        <a-form-item
-          label="头衔类型"
-          name="type"
-          :rules="[{ required: true, message: '不能为空' }]"
-        >
+        <a-form-item label="头衔类型" name="type" :rules="[{ required: true, message: '不能为空' }]">
           <a-select v-model:value="formState.type">
-            <a-select-option
-              v-for="item in options"
-              :value="item.name"
-              :disabled="item.disabled"
-            >
+            <a-select-option v-for="item in options" :value="item.name" :disabled="item.disabled">
               {{ item.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item
-          label="口令"
-          name="password"
-          :rules="[{ required: true, message: '不能为空' }]"
-        >
+        <a-form-item label="口令" name="password" :rules="[{ required: true, message: '不能为空' }]">
           <a-input v-model:value="formState.password" />
         </a-form-item>
 
@@ -193,20 +148,21 @@ onMounted(() => {
   min-height: 100vh;
   margin: auto;
   padding: 10px;
-  background: linear-gradient(
-      0deg,
+  background: linear-gradient(0deg,
       rgba(0, 0, 0, 0.8) 0%,
-      rgba(0, 0, 0, 0.8) 100%
-    ),
+      rgba(0, 0, 0, 0.8) 100%),
     url(@/assets/image/rok-bg.jpg);
   background-size: 200px;
 }
+
 .tou {
   width: 60px;
 }
+
 .tou.enabled {
   filter: hue-rotate(30deg);
 }
+
 .fail-counts {
   font-size: 12px;
 }
@@ -215,6 +171,7 @@ onMounted(() => {
   :deep(.ant-form .ant-form-item) {
     margin-bottom: 0;
   }
+
   :deep(.ant-form .ant-form-item .ant-form-item-label) {
     padding-bottom: 0;
   }
