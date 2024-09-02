@@ -6,7 +6,7 @@
             </a-typography-title>
             <a-button type="primary" @click="message.success(getSupportMsg())" class="align-end">为544助力</a-button>
         </div>
-        <div class="flex justify-center gap-2">
+        <div class="flex justify-center gap-2 p-2 pb-0 pt-0">
             <a-range-picker v-model:value="dateRange" @change="handleDateRangeChange" />
             <a-input v-model:value="usernameSearchKey" placeholder="输入姓名过滤" style="width: 200px;" />
         </div>
@@ -49,6 +49,7 @@
             </a-collapse-panel>
         </a-collapse>
     </div>
+    <a-alert banner :message="`最新击杀寨子记录为：${lastestLog?.content} ${lastestLog?.created_at}`" />
 </template>
 
 <script setup lang="ts">
@@ -161,6 +162,11 @@ const filteredLogs = computed(() => {
 
 const total = computed(() => {
     return logs.value.reduce((prev, next) => prev + next.total, 0)
+})
+
+const lastestLog = computed(() => {
+    if (!list.value || list.value.length === 0) return { content: 'none', created_at: 'none' }
+    return list.value[list.value.length - 1]
 })
 
 function handleDateRangeChange(range: string[]) {
