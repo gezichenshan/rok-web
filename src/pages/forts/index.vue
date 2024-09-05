@@ -91,7 +91,7 @@ function ifUserFortCreateAtTimeTooClose(newFort: Fort, forts: Set<Fort>) {
 }
 
 function processData(list: Fort[], range?: string[] | null) {
-    let _list = list
+    let _list = list.slice(0).reverse()
     // filter time
     if (range && range.length > 0) {
         const [t1, t2] = range
