@@ -3,6 +3,8 @@
         <div class="flex justify-center p-4 pb-2">
             <a-typography-title :level="5">可喜可贺，全服总共击杀 <span class="text-red">{{ total }}</span>
                 个城寨！
+                <span v-if="list.length > 0" class="text-gray text-center" style="font-size: 12px;">记录从{{
+                    dayjs(list[0].created_at).startOf('day').format('YYYY年MM月DD日') }}开始</span>
             </a-typography-title>
             <a-button type="primary" @click="message.success(getSupportMsg())" class="align-end">为544助力</a-button>
         </div>
@@ -48,6 +50,9 @@
                 </div>
             </a-collapse-panel>
         </a-collapse>
+        <div v-if="filteredLogs.length === 0" style="min-height: 80vh;" class="pt-10">
+            <a-empty />
+        </div>
     </div>
     <a-alert banner :message="`最新击杀寨子记录为：${lastestLog?.content} ${lastestLog?.created_at}`" />
 </template>
@@ -175,7 +180,7 @@ function handleDateRangeChange(range: string[]) {
     processData(list.value, range)
 }
 function getSupportMsg() {
-    const idx = Number(Math.random() * 3).toFixed(0)
+    const idx = Number(Math.random() * 4).toFixed(0)
     return ['牛逼牛逼！', '无敌！', '你可真是个老六！', '奖励一个美女！', '龙王驾到！'].find((item, i) => `${i}` === idx)
 }
 onMounted(() => {
