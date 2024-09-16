@@ -62,9 +62,9 @@ import dayjs from "dayjs";
 import { getForts } from "@/api/request";
 import isBetween from 'dayjs/plugin/isBetween'
 dayjs.extend(isBetween)
-const ATTACK_SPLIT_WORD = '对等级'
+const ATTACK_SPLIT_WORD = '对'
 const CANCEL_SPLIT_WORD = '取消了'
-const ATTACK_KEYWORDS = ['对等级5', '对等级4']
+const ATTACK_KEYWORDS = ['对等级5', '对等级4', '对劫掠者']
 const CANCEL_KEYWORDS = ['取消了']
 const KEYWORDS = [...ATTACK_KEYWORDS, ...CANCEL_KEYWORDS]
 const FORT_TIME_DIFF = 5// a same user's fort considers as same if their diff is within 5 second
