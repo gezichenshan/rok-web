@@ -41,19 +41,32 @@
           </a-button>
         </a-form-item>
       </a-form>
+      <div class="mt-4 text-center">
+        开启:<a-switch v-model:checked="open" @change="handleOpen" />
+      </div>
     </a-card>
+    <a-modal v-model:open="adminModalVisible" :footer="null">
+      <div>{{ nextOpenStatus ? '开启' : '关闭' }}小程序</div>
+      <a-input placeholder="请输入管理员密码" v-model:value="adminPass" class="mt-4" />
+      <div class="flex justify-end mt-4 gap-2">
+        <a-button @click="adminModalVisible = false">取消</a-button>
+        <a-button @click="handleSetOpenStatus" type="primary">确认</a-button>
+      </div>
+    </a-modal>
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
 import dayjs from "dayjs";
 import { cacheStorage } from "~/utils";
-import { ask, getQueueNumber, getFailCounts } from "@/api/request";
+import { ask, getQueueNumber, getFailCounts, getOpenStatus, setOpenStatus } from "@/api/request";
 import type { Location } from "@/model";
 import touImg from "@/assets/image/tou.png";
 const FORM_CACHE = "form";
 
 const touClickTimes = ref(0);
+const open = ref(false)
+const adminPass = ref('')
 const enbaledDafaguan = computed(() => touClickTimes.value >= 8);
 function handleTouClick() {
   touClickTimes.value++;
@@ -88,7 +101,28 @@ const formState = reactive<Location>({
   type: "",
   password: "",
 });
+
+const adminModalVisible = ref(false)
+const nextOpenStatus = ref(false)
+function handleOpen(_open: boolean) {
+  nextOpenStatus.value = _open
+  adminModalVisible.value = true
+}
+async function handleSetOpenStatus() {
+  const data = { kindom: formState.kindom, adminPass: adminPass.value, open: nextOpenStatus.value }
+  try {
+    const res = await setOpenStatus(data)
+    adminModalVisible.value = false
+  } catch (error) {
+    nextOpenStatus.value = !nextOpenStatus.value
+  }
+}
+
 const onFinish = async (values: any) => {
+  if (!open.value) {
+    message.error("小程序关闭中，请联系管理员开启～");
+    return;
+  }
   try {
     const _cache = cacheStorage.get(FORM_CACHE);
     if (_cache && _cache.x === values.x && _cache.y === values.y) {
@@ -126,6 +160,17 @@ function fetFailCounts() {
     failCounts.value = res;
   });
 }
+function getStatus() {
+  getOpenStatus(formState.kindom).then((res) => {
+    open.value = res.status;
+  });
+}
+
+watch(adminModalVisible, () => {
+  if (adminModalVisible.value === false) {
+    getStatus()
+  }
+})
 
 onMounted(() => {
   const initialValues = cacheStorage.get(FORM_CACHE);
@@ -136,6 +181,7 @@ onMounted(() => {
   }
   fetQueue();
   fetFailCounts();
+  getStatus()
 });
 </script>
 <style scoped>

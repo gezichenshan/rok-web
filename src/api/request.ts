@@ -20,16 +20,16 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   function (response) {
     if (
-      ["failCounts", "queue", 'fort/list'].every(
+      ["failCounts", "queue", 'fort/list', 'status'].every(
         (path) => !response.config.url?.startsWith(path)
       )
     ) {
-      message.success(response.data);
+      message.success(response.data, 3);
     }
     return response;
   },
   function (error) {
-    message.error(error.response.data);
+    message.error(error.response.data, 3);
     return Promise.reject(error);
   }
 );
@@ -43,8 +43,19 @@ interface FormState {
   password: string;
 }
 
+
 export function ask(data: FormState) {
   return request.post("ask", data).then((res) => {
+    return res.data;
+  });
+}
+export function getOpenStatus(kindom: string) {
+  return request.get(`status?kindom=${kindom}`).then((res) => {
+    return res.data;
+  });
+}
+export function setOpenStatus(data: { kindom: string, adminPass: string, open: boolean }) {
+  return request.post("open", data).then((res) => {
     return res.data;
   });
 }
