@@ -7,8 +7,16 @@
       <template #extra>
         <img :src="touImg" class="tou" @click="handleTouClick" :class="[enbaledDafaguan && 'enabled']" />
       </template>
-      <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }" autocomplete="off"
-        @finish="onFinish" @finishFailed="onFinishFailed">
+      <div v-if="step === 1" style="height: 300px; width: 120px;"
+        class="flex flex-col justify-center items-center m-auto">
+        <div>服务器号</div>
+        <a-input v-model:value="formState.kindom" placeholder="如：544" class="mt-4" />
+        <div class="text-end mt-4">
+          <a-button @click="handleKindomSubmit" type="primary" :disabled="!formState.kindom">下一步</a-button>
+        </div>
+      </div>
+      <a-form v-if="step === 2" :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
+        autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
         <a-form-item label="服务器" name="kindom" :rules="[{ required: true, message: '不能为空' }]">
           <a-input v-model:value="formState.kindom" placeholder="如52服，则填52" />
         </a-form-item>
@@ -67,6 +75,7 @@ const FORM_CACHE = "form";
 const touClickTimes = ref(0);
 const open = ref(false)
 const adminPass = ref('')
+const step = ref(1)
 const enbaledDafaguan = computed(() => touClickTimes.value >= 8);
 function handleTouClick() {
   touClickTimes.value++;
@@ -165,6 +174,10 @@ function getStatus() {
     open.value = res.status;
   });
 }
+function handleKindomSubmit() {
+  step.value = 2
+  getStatus()
+}
 
 watch(adminModalVisible, () => {
   if (adminModalVisible.value === false) {
@@ -178,6 +191,9 @@ onMounted(() => {
     Object.keys(initialValues).forEach((key) => {
       formState[key] = initialValues[key];
     });
+    if (formState.kindom) {
+      step.value = 2
+    }
   }
   fetQueue();
   fetFailCounts();
