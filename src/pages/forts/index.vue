@@ -21,6 +21,7 @@
                         <p style="max-width: 300px;">
                             【\點一根煙】和【、點一根煙】本是同人同号，由于图片识文无法100%准确，所以可以在姓名过滤输入框选择【\點一根煙】和【、點一根煙】，然后点击数据聚合，可以将两条数据合并为同一个账号下的数据。
                         </p>
+                        <p>手机上使用会卡顿，请耐心等待计算结果。</p>
                     </template>
                     <template #title>
                         <span>数据聚合</span>
@@ -201,8 +202,7 @@ function mergeData() {
         })
     })
     userFortsMap.value = new Map()
-    console.log(3123, _list)
-    processData(_list, dateRange.value)
+    processData(_list.slice(0).reverse(), dateRange.value)
 }
 
 watch(merged, () => {
