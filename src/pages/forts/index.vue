@@ -15,7 +15,7 @@
                 :allowClear="true" />
             <div>
                 <a-checkbox v-model:checked="merged">数据聚合</a-checkbox>
-                <a-popover placement="leftBottom">
+                <a-popover placement="leftBottom" trigger="click">
                     <template #content>
                         <p>用法举例</p>
                         <p style="max-width: 300px;">
