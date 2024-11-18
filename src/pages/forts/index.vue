@@ -8,24 +8,26 @@
             </a-typography-title>
             <a-button type="primary" @click="message.success(getSupportMsg())" class="align-end">为544助力</a-button>
         </div>
-        <div class="flex justify-center items-center gap-2 p-2 pb-0 pt-0">
+        <div class="flex justify-center items-center flex-wrap gap-2 p-2 pb-0 pt-0">
             <a-range-picker v-model:value="dateRange" @change="handleDateRangeChange" />
             <a-select v-model:value="usernameSearchKeys" placeholder="输入姓名过滤"
                 :options="allUserNames.map(v => ({ label: v, value: v }))" mode="multiple" style="width: 200px;"
                 :allowClear="true" />
-            <a-checkbox v-model:checked="merged">数据聚合</a-checkbox>
-            <a-popover placement="leftBottom">
-                <template #content>
-                    <p>用法举例</p>
-                    <p style="max-width: 300px;">
-                        【\點一根煙】和【、點一根煙】本是同人同号，由于图片识文无法100%准确，所以可以在姓名过滤输入框选择【\點一根煙】和【、點一根煙】，然后点击数据聚合，可以将两条数据合并为同一个账号下的数据。
-                    </p>
-                </template>
-                <template #title>
-                    <span>数据聚合</span>
-                </template>
-                <QuestionCircleFilled class="text-yellow" />
-            </a-popover>
+            <div>
+                <a-checkbox v-model:checked="merged">数据聚合</a-checkbox>
+                <a-popover placement="leftBottom">
+                    <template #content>
+                        <p>用法举例</p>
+                        <p style="max-width: 300px;">
+                            【\點一根煙】和【、點一根煙】本是同人同号，由于图片识文无法100%准确，所以可以在姓名过滤输入框选择【\點一根煙】和【、點一根煙】，然后点击数据聚合，可以将两条数据合并为同一个账号下的数据。
+                        </p>
+                    </template>
+                    <template #title>
+                        <span>数据聚合</span>
+                    </template>
+                    <QuestionCircleFilled class="text-yellow" />
+                </a-popover>
+            </div>
         </div>
         <a-alert banner message="时间范围为开始日期的23:59:59至结束日期的23:59:59" class="mt-2" />
         <a-collapse v-model:activeKey="activeKey" class="mt-2">
