@@ -8,9 +8,12 @@
             </a-typography-title>
             <a-button type="primary" @click="message.success(getSupportMsg())" class="align-end">为544助力</a-button>
         </div>
-        <div class="flex justify-center gap-2 p-2 pb-0 pt-0">
+        <div class="flex justify-center items-center gap-2 p-2 pb-0 pt-0">
             <a-range-picker v-model:value="dateRange" @change="handleDateRangeChange" />
-            <a-input v-model:value="usernameSearchKey" placeholder="输入姓名过滤" style="width: 200px;" />
+            <a-select v-model:value="usernameSearchKeys" placeholder="输入姓名过滤"
+                :options="allUserNames.map(v => ({ label: v, value: v }))" mode="multiple" style="width: 200px;"
+                :allowClear="true" />
+            <a-checkbox v-model:checked="merged">数据聚合</a-checkbox>
         </div>
         <a-alert banner message="时间范围为开始日期的23:59:59至结束日期的23:59:59" />
         <a-collapse v-model:activeKey="activeKey">
@@ -26,11 +29,11 @@
                         <span v-if="user.rank === 2" style="color:chocolate;font-size: 24px;">
                             🥉季军
                         </span>
-                        <div class="text-red font-bold"
+                        <div
                             :class="[user.rank < 3 && 'animate-rubber-band animate-count-infinite animate-duration-1s text-2xl']">
-                            {{
-                                user.name
-                            }}</div>
+                            <span v-if="user.rank > 2">{{ i + 1 }}. </span>
+                            <span class="font-bold text-red">{{ user.name }}</span>
+                        </div>
                         <span>成功击杀了</span>
                         <span class="text-purple font-bold">{{ user.total }}</span>
                         <span>个城寨</span>
@@ -64,7 +67,7 @@ import isBetween from 'dayjs/plugin/isBetween'
 dayjs.extend(isBetween)
 const ATTACK_SPLIT_WORD = '对'
 const CANCEL_SPLIT_WORD = '取消了'
-const ATTACK_KEYWORDS = ['对等级5', '对等级4', '对劫掠者']
+const ATTACK_KEYWORDS = ['对等级', '对野蛮人']
 const CANCEL_KEYWORDS = ['取消了']
 const KEYWORDS = [...ATTACK_KEYWORDS, ...CANCEL_KEYWORDS]
 const FORT_TIME_DIFF = 5// a same user's fort considers as same if their diff is within 5 second
@@ -76,11 +79,13 @@ const list = ref<Fort[]>([])
 const userFortsMap = ref(new Map())
 const activeKey = ref('')
 const dateRange = ref([])
-const usernameSearchKey = ref('')
+const usernameSearchKeys = ref([])
+const merged = ref(false)//
 
 async function fetchForts() {
     list.value = await getForts()
-    processData(list.value)
+    userFortsMap.value = new Map()
+    processData(list.value, dateRange.value)
 }
 
 
@@ -107,6 +112,7 @@ function processData(list: Fort[], range?: string[] | null) {
         console.log('time filter list result:', _list)
     }
     let _filteredList = _list.filter(item => KEYWORDS.some(kwd => item.content.includes(kwd)))
+    console.log(9393939, _filteredList)
     _filteredList.forEach((item) => {
         if (item.content.includes(ATTACK_SPLIT_WORD)) {
             const username = item.content.split(ATTACK_SPLIT_WORD)[0]
@@ -159,10 +165,38 @@ const logs = computed(() => {
 
     return arr.sort((a, b) => b.total - a.total).map((item, index) => ({ ...item, rank: index }))
 })
+const allUserNames = computed(() => logs.value.map(item => item.name))
 
 const filteredLogs = computed(() => {
-    if (!usernameSearchKey.value) return logs.value
-    return logs.value.filter(item => item.name.includes(usernameSearchKey.value))
+    if (usernameSearchKeys.value.length === 0) return logs.value
+    return logs.value.filter(item => {
+        return usernameSearchKeys.value.some(name => item.name.includes(name))
+    })
+})
+
+function mergeData() {
+    let _list: Fort[] = []
+    filteredLogs.value.forEach(item => {
+        item.attack.forEach(v => {
+            const textAfterUsername = v.content.split(ATTACK_SPLIT_WORD)[1]
+            _list.push({ content: `${usernameSearchKeys.value[0]}${ATTACK_SPLIT_WORD}${textAfterUsername}`, created_at: v.created_at })
+        })
+        item.cancel.forEach(v => {
+            const textAfterUsername = v.content.split(CANCEL_SPLIT_WORD)[1]
+            _list.push({ content: `${usernameSearchKeys.value[0]}${CANCEL_SPLIT_WORD}${textAfterUsername}`, created_at: v.created_at })
+        })
+    })
+    userFortsMap.value = new Map()
+    console.log(3123, _list)
+    processData(_list, dateRange.value)
+}
+
+watch(merged, () => {
+    if (merged.value) {
+        mergeData()
+    } else {
+        fetchForts()
+    }
 })
 
 const total = computed(() => {
