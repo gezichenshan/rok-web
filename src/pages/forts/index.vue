@@ -36,17 +36,20 @@
                 <template #header>
                     <div class='flex item-center' :style="`${i < 3 && 'line-height:30px'}`">
                         <span v-if="user.rank === 0" style="color:gold;font-size: 24px;">
-                            🏆冠军
+                            <img :src="throphyGold" class="throphy" />
                         </span>
-                        <span v-if="user.rank === 1" style="color: silver;font-size: 24px;">
-                            🥈亚军
+                        <span v-if="user.rank >= 1 && user.rank <= 2" s>
+                            <img :src="throphyPurple" class="throphy" />
                         </span>
-                        <span v-if="user.rank === 2" style="color:chocolate;font-size: 24px;">
-                            🥉季军
+                        <span v-if="user.rank >= 3 && user.rank <= 7">
+                            <img :src="throphyBlue" class="throphy" />
+                        </span>
+                        <span v-if="user.rank >= 8 && user.rank <= 17">
+                            <img :src="throphyGreen" class="throphy" />
                         </span>
                         <div
                             :class="[user.rank < 3 && 'animate-rubber-band animate-count-infinite animate-duration-1s text-2xl']">
-                            <span v-if="user.rank > 2">{{ i + 1 }}. </span>
+                            <span v-if="user.rank > 2" class="ml-1">{{ i + 1 }}. </span>
                             <span class="font-bold text-red">{{ user.name }}</span>
                         </div>
                         <span>成功击杀了</span>
@@ -86,6 +89,10 @@ const ATTACK_KEYWORDS = ['对等级', '对野蛮人']
 const CANCEL_KEYWORDS = ['取消了']
 const KEYWORDS = [...ATTACK_KEYWORDS, ...CANCEL_KEYWORDS]
 const FORT_TIME_DIFF = 5// a same user's fort considers as same if their diff is within 5 second
+import throphyGold from '@/assets/image/gold.jpg'
+import throphyPurple from '@/assets/image/purple.jpg'
+import throphyBlue from '@/assets/image/blue.jpg'
+import throphyGreen from '@/assets/image/green.jpg'
 
 interface Fort {
     content: string, created_at: string
@@ -236,4 +243,9 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.throphy {
+    width: 30px;
+    border-radius: 50px;
+}
+</style>
